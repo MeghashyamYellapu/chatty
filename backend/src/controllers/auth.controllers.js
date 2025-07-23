@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
-  const { fullname, email, password } = req.body;
+  const { fullName, email, password } = req.body;
   try {
-    if (!fullname || !email || !password) {
+    if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -22,7 +22,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      fullname,
+      fullName,
       email,
       password: hashedPassword,
     });
@@ -34,9 +34,9 @@ export const signup = async (req, res) => {
 
       res.status(201).json({
         _id: newUser._id,
-        fullname: newUser.fullname,
+        fullName: newUser.fullName,
         email: newUser.email,
-        profilepic: newUser.profilepic,
+        profilePic: newUser.profilePic,
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
@@ -65,9 +65,9 @@ export const login = async (req, res) => {
 
     res.status(200).json({
       _id: user._id,
-      fullname: user.fullname,
+      fullName: user.fullName,
       email: user.email,
-      profilepic: user.profilepic,
+      profilePic: user.profilePic,
     });
   } catch (error) {
     console.log("Error in login controller", error.message);
@@ -87,17 +87,17 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilepic } = req.body;
+    const { profilePic } = req.body;
     const userId = req.user._id;
 
-    if (!profilepic) {
+    if (!profilePic) {
       return res.status(400).json({ message: "Profile pic is required" });
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilepic);
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { profilepic: uploadResponse.secure_url },
+      { profilePic: uploadResponse.secure_url },
       { new: true }
     );
 
